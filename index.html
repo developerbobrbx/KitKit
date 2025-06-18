@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Script Executor UI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Fredoka One', cursive;
+    }
+
+    .container {
+      width: 600px;
+      height: 400px;
+      background: linear-gradient(to bottom, #3e3e3e, #111);
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      gap: 20px;
+    }
+
+    .textbox {
+      width: 100%;
+      height: 200px;
+      background-color: #2f2f2f;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 24px;
+      text-align: center;
+      padding: 20px;
+      resize: none;
+    }
+
+    .buttons {
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      margin-top: auto;
+    }
+
+    .btn {
+      background-color: #1c1c1c;
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <textarea class="textbox">Enter Script Here.</textarea>
+    <div class="buttons">
+      <button class="btn">Execute</button>
+      <button class="btn">Clear</button>
+    </div>
+  </div>
+</body>
+</html>
