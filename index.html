@@ -1,128 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>KitKit Scripts</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
-  <style>
-    body {
-      height: 100vh;
-      background-color: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Fredoka One', cursive;
-    }
-    .container {
-      width: 600px;
-      height: 400px;
-      background: linear-gradient(to bottom, #3e3e3e, #111);
-      border-radius: 15px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 30px;
-      gap: 20px;
-    }
-    .textbox {
-      width: 100%;
-      height: 200px;
-      background-color: #2f2f2f;
-      border: none;
-      border-radius: 10px;
-      color: white;
-      font-size: 24px;
-      text-align: center;
-      padding: 20px;
-      resize: none;
-    }
-    .buttons {
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      margin-top: auto;
-    }
-    .btn {
-      background-color: #1c1c1c;
-      color: white;
-      border: none;
-      padding: 15px 40px;
-      border-radius: 10px;
-      font-size: 18px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .btn:hover {
-      background-color: #333;
-    }
-    .status {
-      color: #4CAF50;
-      font-size: 14px;
-      margin-top: 10px;
-    }
-    .error {
-      color: #ff4444;
-      font-size: 14px;
-      margin-top: 10px;
-    }
-  </style>
+    <title>KitKit Scripts</title>
 </head>
 <body>
-  <div class="container">
-    <textarea class="textbox" id="scriptBox" placeholder="Enter Script Here...">print("Hello from KitKit!")</textarea>
-    <div class="buttons">
-      <button class="btn" onclick="sendScript()">Execute</button>
-      <button class="btn" onclick="clearScript()">Clear</button>
-    </div>
-    <div id="status"></div>
-  </div>
-  <script>
-    function clearScript() {
-      document.getElementById('scriptBox').value = '';
-      document.getElementById('status').innerHTML = '';
-    }
+    <h1>KitKit Scripts</h1>
+    <textarea id="script" rows="10" cols="80">print("Hello from KitKit!")</textarea><br><br>
+    <button onclick="sendScriptPOST()">Execute (POST)</button>
+    <button onclick="sendScriptGET()">Execute (GET)</button>
+    <div id="result"></div>
 
-    async function sendScript() {
-      const script = document.getElementById('scriptBox').value;
-      const statusDiv = document.getElementById('status');
-      
-      if (!script.trim()) {
-        statusDiv.innerHTML = '<div class="error">Please enter a script first!</div>';
-        return;
-      }
-      
-      statusDiv.innerHTML = '<div class="status">Sending script...</div>';
-      
-      try {
-        console.log('Sending to:', 'https://kitkitscripts.kesug.com/post.php');
-        console.log('Data:', { gameId: "SECRET123", script: script });
-        
-        const response = await fetch('https://kitkitscripts.kesug.com/post.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            gameId: "SECRET123",
-            script: script
-          })
-        });
-        
-        console.log('Response status:', response.status);
-        const responseText = await response.text();
-        console.log('Response text:', responseText);
-        
-        if (response.ok) {
-          statusDiv.innerHTML = '<div class="status">✅ ' + responseText + '</div>';
-        } else {
-          statusDiv.innerHTML = '<div class="error">❌ Error: ' + responseText + '</div>';
+    <script>
+        async function sendScriptPOST() {
+            const script = document.getElementById('script').value;
+            const result = document.getElementById('result');
+            result.innerHTML = 'Sending via POST...';
+            
+            try {
+                const response = await fetch('https://kitkitscripts.kesug.com/post.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ gameId: "SECRET123", script: script })
+                });
+                const text = await response.text();
+                result.innerHTML = 'POST Result: ' + text;
+            } catch (error) {
+                result.innerHTML = 'POST Failed: ' + error.message;
+            }
         }
         
-      } catch (error) {
-        console.error('Error:', error);
-        statusDiv.innerHTML = '<div class="error">❌ Network error: ' + error.message + '</div>';
-      }
-    }
-  </script>
+        async function sendScriptGET() {
+            const script = document.getElementById('script').value;
+            const result = document.getElementById('result');
+            result.innerHTML = 'Sending via GET...';
+            
+            try {
+                const url = 'https://kitkitscripts.kesug.com/post.php?gameId=SECRET123&script=' + encodeURIComponent(script);
+                const response = await fetch(url);
+                const text = await response.text();
+                result.innerHTML = 'GET Result: ' + text;
+            } catch (error) {
+                result.innerHTML = 'GET Failed: ' + error.message;
+            }
+        }
+    </script>
 </body>
 </html>
