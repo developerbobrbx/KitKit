@@ -2,15 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Script Executor UI</title>
+  <title>KitKit Scripts</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
       height: 100vh;
       background-color: #000;
@@ -19,7 +13,6 @@
       align-items: center;
       font-family: 'Fredoka One', cursive;
     }
-
     .container {
       width: 600px;
       height: 400px;
@@ -31,7 +24,6 @@
       padding: 30px;
       gap: 20px;
     }
-
     .textbox {
       width: 100%;
       height: 200px;
@@ -44,14 +36,12 @@
       padding: 20px;
       resize: none;
     }
-
     .buttons {
       width: 100%;
       display: flex;
       justify-content: space-around;
       margin-top: auto;
     }
-
     .btn {
       background-color: #1c1c1c;
       color: white;
@@ -62,7 +52,6 @@
       cursor: pointer;
       transition: 0.3s;
     }
-
     .btn:hover {
       background-color: #333;
     }
@@ -70,11 +59,31 @@
 </head>
 <body>
   <div class="container">
-    <textarea class="textbox">Enter Script Here.</textarea>
+    <textarea class="textbox" id="scriptBox">Enter Script Here.</textarea>
     <div class="buttons">
-      <button class="btn">Execute</button>
-      <button class="btn">Clear</button>
+      <button class="btn" onclick="sendScript()">Execute</button>
+      <button class="btn" onclick="document.getElementById('scriptBox').value = ''">Clear</button>
     </div>
   </div>
+
+  <script>
+    async function sendScript() {
+      const script = document.getElementById('scriptBox').value;
+
+      const res = await fetch('https://kitkitscripts.epizy.com/post.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          gameId: "SECRET123",
+          script: script
+        })
+      });
+
+      const data = await res.text();
+      alert("Server says: " + data);
+    }
+  </script>
 </body>
 </html>
