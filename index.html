@@ -1,48 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>KitKit Scripts</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KitKitScripts</title>
+  <style>
+    body {
+      background-color: #000; /* black background */
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #1a1a1a;
+      padding: 40px;
+      border-radius: 20px;
+      width: 600px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    }
+    textarea {
+      width: 100%;
+      height: 250px;
+      background: #333;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 10px;
+      padding: 12px;
+      resize: none;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-right: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #444;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #666;
+    }
+  </style>
 </head>
 <body>
-    <h1>KitKit Scripts</h1>
-    <textarea id="script" rows="10" cols="80">print("Hello from KitKit!")</textarea><br><br>
-    <button onclick="sendScriptPOST()">Execute (POST)</button>
-    <button onclick="sendScriptGET()">Execute (GET)</button>
-    <div id="result"></div>
+  <div class="container">
+    <textarea id="scriptInput" placeholder="Enter script here..."></textarea><br/>
+    <button onclick="updateScript()">Execute</button>
+    <button onclick="clearText()">Clear</button>
+  </div>
 
-    <script>
-        async function sendScriptPOST() {
-            const script = document.getElementById('script').value;
-            const result = document.getElementById('result');
-            result.innerHTML = 'Sending via POST...';
-            
-            try {
-                const response = await fetch('https://kitkitscripts.kesug.com/post.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ gameId: "SECRET123", script: script })
-                });
-                const text = await response.text();
-                result.innerHTML = 'POST Result: ' + text;
-            } catch (error) {
-                result.innerHTML = 'POST Failed: ' + error.message;
-            }
+  <script>
+    function clearText() {
+      document.getElementById('scriptInput').value = '';
+    }
+
+    async function updateScript() {
+      const content = document.getElementById('scriptInput').value;
+      const encodedContent = btoa(unescape(encodeURIComponent(content))); // base64 encode
+
+      const res = await fetch('https://api.github.com/repos/YOUR_USERNAME/YOUR_REPO/contents/script.txt', {
+        method: "PUT",
+        headers: {
+          "Authorization": "token YOUR_GITHUB_TOKEN",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: "Update script.txt via KitKitScripts panel",
+          content: encodedContent,
+          sha: await getCurrentSHA()
+        })
+      });
+
+      if (res.ok) {
+        alert("✅ Script updated!");
+      } else {
+        alert("❌ Update failed. Check token, repo, and permissions.");
+      }
+    }
+
+    async function getCurrentSHA() {
+      const res = await fetch('https://api.github.com/repos/developerbobrbx/KitKit/contents/script.txt', {
+        headers: {
+          "Authorization": "token YOUR_GITHUB_TOKEN"
         }
-        
-        async function sendScriptGET() {
-            const script = document.getElementById('script').value;
-            const result = document.getElementById('result');
-            result.innerHTML = 'Sending via GET...';
-            
-            try {
-                const url = 'https://kitkitscripts.kesug.com/post.php?gameId=SECRET123&script=' + encodeURIComponent(script);
-                const response = await fetch(url);
-                const text = await response.text();
-                result.innerHTML = 'GET Result: ' + text;
-            } catch (error) {
-                result.innerHTML = 'GET Failed: ' + error.message;
-            }
-        }
-    </script>
+      });
+      const json = await res.json();
+      return json.sha;
+    }
+  </script>
 </body>
 </html>
